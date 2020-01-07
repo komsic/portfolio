@@ -57,3 +57,7 @@
     height: 180px;
   }
 }
+
+form > * {
+	margin-bottom: .5rem;
+}

@@ -26,9 +26,79 @@
 			<span>&times;</span>
 		</button>
 	</div>
+  
+	<main class="container my-4">
+		<h4>Want to talk? Please send a message.</h4>
+		
+		<form id="contact-form">
+			<input class="form-control" type="text" name="reply_to" placeholder="Your Email" />
+
+			<input class="form-control" type="text" name="subject" placeholder="Subject" />
+
+			<textarea class="form-control" name="text" placeholder="Message" rows="3"></textarea>
+
+			<input class="btn btn-primary form-control" name="send" type="submit" value="Send" />
+
+			<p>Powered by <a href="https://postmail.invotes.com" target="_blank">PostMail</a></p>
+		</form>
+	</main>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+  
+	<script>
+		const form_id = "contact-form";
+
+    const data = {
+			"access_token": "f5e0q0fuwvgomultm4wlnuzo"
+    };
+		
+		const sendButton = $(`#${form_id} [name="send"]`);
+		
+		const alert = $(".alert");
+		const alertMessage = $("#alert-message");
+		
+		function onSuccess() {
+			sendButton.val("Send");
+			$(`#${form_id} [name='subject']`).val("");
+			$(`#${form_id} [name='text']`).val("");
+			$(`#${form_id} [name='reply_to']`).val("");
+			alertMessage.text("Email Successfully Sent");
+			alert.addClass('alert-success show');
+    }
+
+    function onError(error) {
+			sendButton.val('Send');
+			alertMessage.text("Error!!! Email could not be sent. Please try again tommorow");
+			alert.addClass('alert-danger show');
+    }
+
+		function send() {
+			sendButton.val('Sending…');
+			sendButton.prop('disabled',true);
+
+			const subject = $(`#${form_id} [name='subject']`).val();
+			const message = $(`#${form_id} [name='text']`).val();
+			const replyTo = $(`#${form_id} [name='reply_to']`).val();
+			data['subject'] = subject;
+			data['text'] = message;
+			data['reply_to'] = replyTo;
+
+			$.post('https://postmail.invotes.com/send',
+					data,
+					onSuccess
+			).fail(onError);
+			
+			return false;
+    }
+
+    sendButton.on('click', send);
+
+    const $form = $(`#${form_id}`);
+    $form.submit(function( event ) {
+			event.preventDefault();
+    });
+	</script>
 </body>
 </html>
